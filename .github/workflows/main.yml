@@ -20,9 +20,10 @@ jobs:
         keyvault: "playgroundTerraformVault"
         secrets: 'client-id, client-password'
       id: GetSecretAction
+    - name: 'Checkout'
+      uses: actions/checkout@v2
     - name: 'Terraform deployment'
       run: |
-        pwd
         ls -la
         terraform init
         terraform validate
