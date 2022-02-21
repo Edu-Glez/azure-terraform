@@ -23,7 +23,7 @@ jobs:
     - name: 'Terraform deployment'
       run: |
         pwd
-        cd azure-terraform
+        ls -la
         terraform init
         terraform validate
         terraform plan
