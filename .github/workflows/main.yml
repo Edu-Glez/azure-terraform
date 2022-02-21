@@ -22,6 +22,8 @@ jobs:
       id: GetSecretAction
     - name: 'Terraform deployment'
       run: |
+        pwd
+        cd azure-terraform
         terraform init
         terraform validate
         terraform plan
