@@ -1,4 +1,4 @@
-name: Run Azure Login with OpenID Connect
+name: Run Azure Login with OpenID Connect, get secrets from key Vault and do terraform deployment
 on: [push]
  
 permissions:
@@ -11,12 +11,24 @@ jobs:
     - name: 'Az CLI login'
       uses: azure/login@v1
       with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }} # Secrets defined 
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }} # in GitHub Settings
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  
-    - name: 'Run Azure CLI commands'
+    - name: 'Ger secrets from key Vault'
+      uses: Azure/get-keyvault-secrets@v1
+      with:
+        keyvault: "keyvaultname"
+        secrets: 'client-id, client-password'
+      id: GetSecretAction
+    - name: 'Terraform deployment'
       run: |
-          az account show
-          az group list
-          pwd
+        terraform init
+        terraform validate
+        terraform plan
+        terrafor apply
+      env:
+        #Secrets for connecting Terraform provider to azure
+        ARM_CLIENT_ID:     ${{ steps.GetSecretAction.outputs.client-id }}       # Secrets from 
+        ARM_CLIENT_SECRET: ${{ steps.GetSecretAction.outputs.client-password }} # key Vault
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID:       ${{ secrets.AZURE_TENANT_ID }} 
