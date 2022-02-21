@@ -28,7 +28,7 @@ jobs:
         terraform init
         terraform validate
         terraform plan
-        terraform apply
+        terraform apply -auto-approve
       env:
         #Secrets for connecting Terraform provider to azure
         ARM_CLIENT_ID:     ${{ steps.GetSecretAction.outputs.client-id }}       # Secrets from 
